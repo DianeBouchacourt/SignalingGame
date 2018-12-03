@@ -100,7 +100,7 @@ def eval(opt, loader, players, reward_function,
         rewards_no_grad = Variable(rewards.data.clone(), requires_grad=False)
         loss = - rewards_no_grad
         acc_all += int(rewards_no_grad.sum())
-        loss_all += loss.mean().data[0]
+        loss_all += loss.mean().item()
         if n >= opt.val_images_use:
             break
     assert n_games == n_games_total
@@ -111,40 +111,24 @@ def eval(opt, loader, players, reward_function,
     players.receiver.train()
     players.baseline.train()
     reward_function.train()
-
     return loss_all / float(n_games), \
-        acc_all / float(n_games * opt.batch_size), \
-        n_used_symbols
+        acc_all / float(n_games * opt.batch_size), n_used_symbols
 
 def train():
 
     opt = parse_arguments()
-    print(opt)
-    if opt.ours:
-        if not opt.ood:
-            root = ""
-        else:
-            root = ""
-        val_root=os.path.join(root,"val_dataset_peragent/")
-        val_suffix = 'seed%d_same%d' % (0, opt.same)
-    else:
-        root= ""
-        val_root=""
-        val_suffix = 'seed%d_same%d' % (0, opt.same)
-    print(root)
+    root = opt.root
+    val_root=os.path.join(root,"val_dataset_peragent/")
+    val_suffix = 'seed%d_same%d' % (0, opt.same)
+
     val_z = pickle.load(open( val_root+"val_z"+val_suffix, "rb" ) )
     val_images_indexes_sender = pickle.load(open(val_root+
                                 "val_images_indexes_sender"+val_suffix,"rb" ))
     val_images_indexes_receiver = pickle.load(open(val_root+
                                 "val_images_indexes_receiver"+val_suffix,"rb" ))
-    if not opt.ood:
-        loader = features_loader(
-            root=root, probs=opt.probs, norm=opt.norm,
+    loader = features_loader(root=root, probs=opt.probs, norm=opt.norm,
             ours=opt.ours, partition='train/')
-    else:
-        loader = features_loader(
-            root=root, probs=opt.probs, norm=opt.norm,
-            ours=opt.ours, partition='train/in/')
+
     print(loader.dataset.data_tensor.shape)
     opt.feat_size = loader.dataset.data_tensor.shape[-1]
 
@@ -260,17 +244,17 @@ def train():
         optimizer.step()
         if i_games % 100 == 0:
             loss_all[i_games] = - rewards_no_grad.mean().data[0]
-            mean_reward, mean_running_reward, n_used_symbols = eval(opt,
+            mean_loss, mean_reward, n_used_symbols = eval(opt,
                     loader, players, reward_function, val_z,
                     val_images_indexes_sender, val_images_indexes_receiver)
-            val_acc_history[i_games, 0] = mean_reward
-            val_acc_history[i_games, 1] = mean_running_reward
+            val_acc_history[i_games, 0] = mean_loss
+            val_acc_history[i_games, 1] = mean_reward
             val_acc_history[i_games, 2] = n_used_symbols
             # save current model
             model_save_name = os.path.join(opt.outf,'players' +
                                     suffix + '_i%d.pt'%i_games)
             torch.save(players.state_dict(), model_save_name)
-            print(loss_all[i_games], mean_reward)
+
     rewards_save_name = os.path.join(opt.outf,'rewards'+suffix)
     np.save(rewards_save_name, loss_all.numpy())
 
@@ -291,10 +275,7 @@ def create_validation():
 
     opt = parse_arguments()
     print(opt)
-    if opt.ours:
-        root = ""
-    else:
-        root= ""
+    root = opt.root
     save_dir = root + 'val_dataset_peragent/'
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
@@ -315,3 +296,4 @@ def create_validation():
 
 if __name__ == "__main__":
     train()
+    # create_validation()

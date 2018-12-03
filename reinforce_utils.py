@@ -4,8 +4,8 @@ import torch.nn.parallel
 import torch.backends.cudnn as cudnn
 import torch.optim as optim
 from torch.autograd import Variable
-import pdb
 import numpy as np
+
 def variable_hook(grad):
     return grad
 

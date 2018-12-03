@@ -53,10 +53,8 @@ def parse_arguments():
                         help='manual seed')
     parser.add_argument('--eps', type=float,default=1e-8,
                         help='eps for numerical stability')
-    parser.add_argument('--ood', type=int,default=0,
-                        help='out of domain classes setting')
     # 2-agents specific parameters
-    parser.add_argument('--tau_s', type=int, default=1,
+    parser.add_argument('--tau_s', type=int, default=10,
                         help='Sender Gibbs temperature')
     parser.add_argument('--tau_r', type=int, default=1,
                         help='Receiver Gibbs temperature')
@@ -64,7 +62,7 @@ def parse_arguments():
                         help='game size')
     parser.add_argument('--probs', type=int, default=0,
                         help='use SFTMAX')
-    parser.add_argument('--ours', type=int, default=0,
+    parser.add_argument('--ours', type=int, default=1,
                         help='use our data')
     parser.add_argument('--add_one', type=int, default=1,
                         help='Add 1 to baseline bias')
@@ -97,7 +95,7 @@ def parse_arguments():
     opt = parser.parse_args()
 
     if opt.root == '':
-        opt.root = os.path.join(os.environ['HOME'], 'data/')
+        opt.root = "/private/home/dianeb/OURDATA/Processed/"
 
     if opt.outf == '.':
         if os.environ.get('SLURM_JOB_DIR') is not None:
