@@ -11,9 +11,6 @@ from torch.autograd import Variable
 import pdb
 from reinforce_utils import *
 from utils import *
-import sys
-sys.path.insert(0,'/private/home/dianeb/rep-learning-task/data_utils/')
-sys.path.insert(0,'/private/home/dianeb/rep-learning-task/embeddings-analysis/')
 from imagenet_data import features_loader
 import numpy as np
 import random

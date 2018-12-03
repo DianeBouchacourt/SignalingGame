@@ -23,10 +23,7 @@ def sender_action(sender, images_vectors, opt):
     sender_probs, s_emb = sender(images_vectors)
     sender_probs = sender_probs + sender.eps
     sample = torch.multinomial(sender_probs, 1)
-    # batch_vocab = vocab.expand((sample.size(0), sender.vocab_size))
-    # signal = torch.gather(batch_vocab, 1, sample.data)
-    # Replace receiver.lin2 with embedding?
-    #https://lirnli.wordpress.com/2017/09/03/one-hot-encoding-in-pytorch/
+
     sample = sample.squeeze(-1)
     one_hot_signal = one_hot(sample, sender.vocab_size,cuda=opt.cuda)
     one_hot_signal = Variable(one_hot_signal.data, requires_grad = True)

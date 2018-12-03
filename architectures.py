@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import pdb
 from reinforce_utils import *
 from utils import compute_similarity_images
 

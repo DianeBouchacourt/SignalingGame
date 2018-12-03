@@ -16,7 +16,7 @@ def compute_similarity_images(space):
 
 def map_to_class(concepts):
     concept_to_idx = {}
-    mapping_file="/private/home/dianeb/OURDATA/synset_words.txt"
+    mapping_file=""
     with open(mapping_file,"r") as f:
         all_rows= f.readlines()
     return all_rows

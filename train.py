@@ -13,11 +13,11 @@ import pdb
 from reinforce_utils import *
 from utils import parse_arguments, get_batch, create_val_batch
 import sys
-sys.path.insert(0,'/private/home/dianeb/rep-learning-task/data_utils/')
 from imagenet_data import features_loader
 import numpy as np
 import pickle
 import random
+
 def eval(opt, loader, players, reward_function,
             val_z, val_images_indexes_sender, val_images_indexes_receiver):
     players.sender.eval()
@@ -122,14 +122,14 @@ def train():
     print(opt)
     if opt.ours:
         if not opt.ood:
-            root = "/private/home/dianeb/OURDATA/Processed/"
+            root = ""
         else:
-            root = "/private/home/dianeb/OURDATA/ProcessedOODclasses/"
+            root = ""
         val_root=os.path.join(root,"val_dataset_peragent/")
         val_suffix = 'seed%d_same%d' % (0, opt.same)
     else:
-        root= "/private/home/dianeb/rep-learning-task/ADATA/v2/"
-        val_root="/private/home/dianeb/rep-learning-task/ADATA/val_dataset/"
+        root= ""
+        val_root=""
         val_suffix = 'seed%d_same%d' % (0, opt.same)
     print(root)
     val_z = pickle.load(open( val_root+"val_z"+val_suffix, "rb" ) )
@@ -292,9 +292,9 @@ def create_validation():
     opt = parse_arguments()
     print(opt)
     if opt.ours:
-        root = "/private/home/dianeb/OURDATA/Processed/"
+        root = ""
     else:
-        root= "/private/home/dianeb/rep-learning-task/ADATA/v2/"
+        root= ""
     save_dir = root + 'val_dataset_peragent/'
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
@@ -312,55 +312,6 @@ def create_validation():
                         "val_images_indexes_sender"+suffix, "wb" ) )
     pickle.dump( val_images_indexes_receiver, open(save_dir+
                         "val_images_indexes_receiver"+suffix, "wb" ) )
-
-def create_validation_OODclasses():
-
-    opt = parse_arguments()
-    print(opt)
-    if opt.ours:
-        root = "/private/home/dianeb/OURDATA/ProcessedOODclasses/"
-
-    save_dir = root + 'val_dataset_peragent/'
-    if not os.path.exists(save_dir):
-        os.mkdir(save_dir)
-    else:
-        print("Data folder exists! Continue?")
-        pdb.set_trace()
-    loader = features_loader(
-            root=root, probs=opt.probs, norm=opt.norm,
-            ours=opt.ours, partition='train/in/')
-    val_z, val_images_indexes_sender, val_images_indexes_receiver = \
-                            create_val_batch(opt, loader)
-    suffix = 'seed%d_same%d' % (opt.manualSeed, opt.same)
-    pickle.dump( val_z, open(save_dir+ "val_z"+suffix, "wb" ) )
-    pickle.dump( val_images_indexes_sender, open(save_dir+
-                        "val_images_indexes_sender"+suffix, "wb" ) )
-    pickle.dump( val_images_indexes_receiver, open(save_dir+
-                        "val_images_indexes_receiver"+suffix, "wb" ) )
-
-def count_concepts():
-
-    opt = parse_arguments()
-    print(opt)
-    if opt.ours:
-        root = "/private/home/dianeb/OURDATA/Processed/"
-    else:
-        root= "/private/home/dianeb/rep-learning-task/ADATA/v2/"
-    val_suffix = 'seed%d_same%d' % (0, opt.same)
-    val_images_indexes_sender = pickle.load(open(val_root+
-                                "val_images_indexes_sender"+val_suffix,"rb" ))
-    val_images_indexes_receiver = pickle.load(open(val_root+
-                                "val_images_indexes_receiver"+val_suffix,"rb" ))
-
-    for val_idx in [val_images_indexes_sender,val_images_indexes_receiver]:
-        im_idx = []
-        for key in val_idx.keys():
-            for idx_pair in range(val_idx[key].shape[0]):
-                im_idx += val_idx[key][idx_pair].tolist()
-        objects_file = os.path.join(root,'train/ours_images_single_sm1.objects')
-        with open(objects_file, "rb") as f:
-            labels = pickle.load(f)
-        print(np.unique(labels[im_idx]).shape[0])
 
 if __name__ == "__main__":
     train()
