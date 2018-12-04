@@ -196,11 +196,11 @@ def train():
         one_hot_signal,sender_probs,one_hot_output,receiver_probs,s_emb,r_emb=\
             players(images_vectors_sender, images_vectors_receiver, opt)
 
-        s_sims=players.sender.return_similarities(s_emb)
-        r_sims=players.receiver.return_similarities(r_emb)
+        # s_sims=players.sender.return_similarities(s_emb)
+        # r_sims=players.receiver.return_similarities(r_emb)
 
-        loss_simi_s = similarity_loss_s(s_sims,sims_im_s)
-        loss_simi_r = similarity_loss_r(r_sims,sims_im_r)
+        # loss_simi_s = similarity_loss_s(s_sims,sims_im_s)
+        # loss_simi_r = similarity_loss_r(r_sims,sims_im_r)
         log_receiver_probs = torch.log(receiver_probs)
         log_sender_probs = torch.log(sender_probs)
         bsl = players.baseline(y.size(0)).squeeze(1)
@@ -219,7 +219,7 @@ def train():
         if np.any(np.isnan(loss_receiver.data.clone().cpu().numpy())):
             pdb.set_trace()
 
-        loss_receiver = loss_receiver + loss_simi_r
+        loss_receiver = loss_receiver
         loss_receiver.mean().backward()
 
         # Backward for Sender
@@ -227,7 +227,7 @@ def train():
         loss_sender = - ((rewards_no_grad - bsl_no_grad)
             * masked_log_proba_sender)
 
-        loss_sender = loss_sender + loss_simi_s
+        loss_sender = loss_sender
         loss_sender.mean().backward()
         # Gradients are clipped before the parameter update
         if opt.grad_clip:
