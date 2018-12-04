@@ -24,14 +24,11 @@ def map_to_class(concepts):
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--root', default='', help='data root folder, default $HOME/data')
-    parser.add_argument('--dataset', default='imagenet',
-                        help='imagenet')
+        '--root', default='', help='data root folder')
     parser.add_argument('--workers', type=int,
                         help='number of data loading workers', default=2)
     parser.add_argument('--imageSize', type=int, default=64,
                         help='the height / width of the input image to network')
-    parser.add_argument('--nf', type=int, default=64)
     parser.add_argument('--lr', type=float, default=0.01,
                         help='learning rate, default=0.01')
     parser.add_argument('--lr_decay_start', type=int, default=10000,

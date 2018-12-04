@@ -133,14 +133,15 @@ def train():
     opt.feat_size = loader.dataset.data_tensor.shape[-1]
 
     sender = InformedSender(opt.game_size, opt.feat_size,
-        opt.embedding_size, opt.hidden_size, opt.vocab_size, temp=opt.tau_s)
+        opt.embedding_size, opt.hidden_size, opt.vocab_size,
+        temp=opt.tau_s,eps=opt.eps)
     if opt.inf_rec:
         print("Using informed receiver")
         receiver = InformedReceiver(opt.game_size, opt.feat_size,
-            opt.embedding_size, opt.hidden_size, opt.vocab_size)
+            opt.embedding_size, opt.hidden_size, opt.vocab_size, eps=opt.eps)
     else:
         receiver = Receiver(opt.game_size, opt.feat_size,
-                opt.embedding_size, opt.vocab_size)
+                opt.embedding_size, opt.vocab_size, eps=opt.eps)
     baseline = Baseline(opt.add_one)
     baseline_loss = nn.MSELoss(reduce=False)
     similarity_loss_s = nn.MSELoss(reduce=False)
@@ -243,7 +244,7 @@ def train():
 
         optimizer.step()
         if i_games % 100 == 0:
-            loss_all[i_games] = - rewards_no_grad.mean().data[0]
+            loss_all[i_games] = - rewards_no_grad.mean().item()
             mean_loss, mean_reward, n_used_symbols = eval(opt,
                     loader, players, reward_function, val_z,
                     val_images_indexes_sender, val_images_indexes_receiver)

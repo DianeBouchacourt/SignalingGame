@@ -35,10 +35,10 @@ class Players(nn.Module):
                     s_emb,r_emb
 
 class InformedSender(nn.Module):
-    def __init__(self, game_size, feat_size, embedding_size,
-        hidden_size, vocab_size=100, temp=1.):
+    def __init__(self, game_size, feat_size, embedding_size, hidden_size,
+        vocab_size=100, temp=1., eps=1e-8):
         super(InformedSender, self).__init__()
-        self.eps = 1e-8
+        self.eps = eps
         self.game_size = game_size
         self.embedding_size = embedding_size
         self.hidden_size = hidden_size
@@ -114,10 +114,10 @@ class InformedSender(nn.Module):
 
 class Receiver(nn.Module):
     def __init__(self, game_size, feat_size, embedding_size,
-        vocab_size=100):
+        vocab_size=100,eps=1e-8):
         #TODO: property size?
         super(Receiver, self).__init__()
-        self.eps = 1e-8
+        self.eps = eps
         self.game_size = game_size
         self.embedding_size = embedding_size
 
@@ -170,10 +170,11 @@ class Receiver(nn.Module):
         return sims
 
 class InformedReceiver(nn.Module):
-    def __init__(self, game_size, feat_size, embedding_size,hidden_size, vocab_size=100, temp=1.):
+    def __init__(self, game_size, feat_size, embedding_size,hidden_size,
+            vocab_size=100, temp=1.,eps=1e-8):
         #TODO: property size?
         super(InformedReceiver, self).__init__()
-        self.eps = 1e-8
+        self.eps = eps
         self.game_size = game_size
         self.embedding_size = embedding_size
 
