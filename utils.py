@@ -92,7 +92,7 @@ def parse_arguments():
     opt = parser.parse_args()
 
     if opt.root == '':
-        opt.root = "/private/home/dianeb/OURDATA/Processed/"
+        opt.root = "./data/"
 
     if opt.outf == '.':
         if os.environ.get('SLURM_JOB_DIR') is not None:
