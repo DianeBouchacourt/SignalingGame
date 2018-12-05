@@ -21,8 +21,8 @@ from myFolderImagenet import MyImageFolder
 import pickle
 import json
 
-def produce_vgg_features(data='/private/home/dianeb/AGENTDATA/Raw/fruit_data/',
-    save='/private/home/dianeb/AGENTDATA/Processed/fruit_data/',
+def produce_vgg_features(data='path/to/your/images',
+    save='path/to/save/processed/images',
     bn=False,
     sftmax=0,
     partition='train/'):
